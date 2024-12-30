@@ -51,10 +51,18 @@ class AdminController extends Controller {
     }
 
     public function edit( User $user ) {
+
+        if ( $user->hasRole( 'Admin' ) ) {
+            return response()->json( [
+                'error' => 'Admin User Cannot be Edited',
+            ], 400 ); // 400 Bad Request for error
+        }
+
         return view( 'pages.admin.edit', compact( 'user' ) );
     }
 
     public function update( AdminUpdateUserRequest $request, User $user ) {
+
         $validated = $request->validated();
 
         $imagePath = $user->image;
@@ -93,6 +101,12 @@ class AdminController extends Controller {
     }
 
     public function destroy( User $user ) {
+
+        if ( $user->hasRole( 'Admin' ) ) {
+            return response()->json( [
+                'error' => 'Admin User Cannot be Deleted',
+            ], 400 ); // 400 Bad Request for error
+        }
 
         if ( $user->image ) {
             Storage::delete( "public/{$user->image}" );
