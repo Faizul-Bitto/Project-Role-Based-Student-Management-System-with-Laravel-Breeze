@@ -1,90 +1,118 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight text-center">
-            {{ __('User  Management') }}
+            {{ __('User Management') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <div class="flex justify-center items-center min-h-[70px]">
-                        <a href="{{ route('admin.users.create') }}"
-                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Create User
-                        </a>
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex">
+            <!-- Sidebar -->
+            <div class="w-60 bg-gray-600 text-gray-100 flex flex-col rounded-lg shadow-md">
+                <div class="p-4">
+                    <h1 class="text-lg font-semibold text-white"><b>Admin</b></h1>
+                </div>
+                <ul class="flex-1">
+                    <li class="p-4 hover:bg-gray-700 rounded-md">
+                        <a href="{{ route('admin.dashboard') }}" class="text-white">Go Back to Dashboard</a>
+                    </li>
+                    <li class="p-4 hover:bg-gray-700 rounded-md">
+                        <a href="{{ route('admin.users.create') }}" class="text-white">Create User</a>
+                    </li>
+                    <li class="p-4 hover:bg-gray-700 rounded-md">
+                        <a href="{{ route('profile.edit') }}" class="text-white">Your Profile</a>
+                    </li>
+                    <li class="p-4 hover:bg-gray-700 rounded-md">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="text-white">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Main Section -->
+            <div class="flex-1 ml-6 bg-white p-8 shadow-lg rounded-lg">
+
+                @if (session('success'))
+                    <div class="alert alert-success mb-4">
+                        {{ session('success') }}
                     </div>
+                @endif
 
-                    @if (session('success'))
-                        <div class="alert alert-success mb-4">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Name</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Email</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Phone</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Role</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Student ID</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Image</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach ($users as $user)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $user->name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $user->email }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $user->phone }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $user->getRoleNames()->implode(', ') }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $user->student_id }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        @if ($user->image)
-                                            <img src="{{ asset($user->image) }}" alt="User  Image"
-                                                class="h-10 w-10 rounded-full">
-                                        @else
-                                            No Image
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                <table class="min-w-full mt-6 table-auto border-collapse">
+                    <thead class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
+                        <tr>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-b-2 border-gray-200">
+                                Name</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-b-2 border-gray-200">
+                                Email</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-b-2 border-gray-200">
+                                Phone</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-b-2 border-gray-200">
+                                Role</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-b-2 border-gray-200">
+                                Student ID</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-b-2 border-gray-200">
+                                Image</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-b-2 border-gray-200">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                        @foreach ($users as $user)
+                            <tr class="hover:bg-gray-50 transition-all duration-300 ease-in-out">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-b border-gray-200">
+                                    {{ $user->name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-b border-gray-200">
+                                    {{ $user->email }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-b border-gray-200">
+                                    {{ $user->phone }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-b border-gray-200">
+                                    {{ $user->getRoleNames()->implode(', ') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-b border-gray-200">
+                                    {{ $user->student_id }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-b border-gray-200">
+                                    @if ($user->image)
+                                        <img src="{{ asset($user->image) }}" alt="User Image"
+                                            class="h-10 w-10 rounded-full border-2 border-gray-200 shadow-md">
+                                    @else
+                                        <span class="text-black">N/A</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-b border-gray-200">
+                                    <div class="flex space-x-4">
                                         <a href="{{ route('admin.users.edit', $user) }}"
-                                            class="text-yellow-600 hover:text-yellow-900">Edit</a>
+                                            class="px-4 py-2 text-white bg-yellow-500 hover:bg-yellow-600 rounded-full transition-all duration-300 ease-in-out shadow-md">
+                                            Edit
+                                        </a>
                                         <form action="{{ route('admin.users.destroy', $user) }}" method="POST"
                                             style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900 ml-2"
-                                                onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+                                            <button type="submit"
+                                                class="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-full transition-all duration-300 ease-in-out shadow-md"
+                                                onclick="return confirm('Are you sure you want to delete this user?');">
+                                                Delete
+                                            </button>
                                         </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
 
-                    <!-- Pagination Links -->
-                    <div class="mt-4">
-                        {{ $users->links() }}
-                    </div>
+                <!-- Pagination Links -->
+                <div class="mt-4">
+                    {{ $users->links('vendor.pagination.tailwind') }}
                 </div>
             </div>
         </div>

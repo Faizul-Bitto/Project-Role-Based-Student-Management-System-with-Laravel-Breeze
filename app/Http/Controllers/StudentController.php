@@ -8,7 +8,7 @@ use App\Http\Requests\StudentStoreGuestUserRequest;
 
 class StudentController extends Controller {
     public function index() {
-        $users = User::where( 'Role', '!=', 'Admin' )->paginate( 2 );
+        $users = User::where( 'Role', '!=', 'Admin' )->paginate( 5 );
 
         return view( 'pages.student.index', compact( 'users' ) );
     }

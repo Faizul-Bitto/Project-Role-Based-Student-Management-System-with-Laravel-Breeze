@@ -42,7 +42,7 @@ Route::middleware( ['auth', 'role:Admin'] )->group( function () {
 // Student routes
 Route::middleware( ['auth', 'role:Student'] )->group( function () {
     Route::get( '/student/dashboard', [DashboardController::class, 'studentDashboard'] )->name( 'student.dashboard' );
-    Route::get( '/student/dashboard', [StudentController::class, 'index'] )->name( 'student.dashboard.index' );
+    Route::get( '/student/users', [StudentController::class, 'index'] )->name( 'student.dashboard.index' );
     Route::get( '/student/guests/create', [StudentController::class, 'create'] )->name( 'student.guests.create' );
     Route::post( '/student/guests', [StudentController::class, 'store'] )->name( 'student.guests.store' );
 } );

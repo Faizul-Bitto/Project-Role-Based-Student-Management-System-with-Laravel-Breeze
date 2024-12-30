@@ -1,68 +1,68 @@
 <x-app-layout>
-    <div class="flex h-screen bg-gray-100">
+    <div class="flex bg-gray-50 min-h-screen p-4">
         <!-- Sidebar -->
-        <div class="w-60 bg-gray-600 text-gray-100 flex flex-col mt-12">
-            <div class="p-4">
-                <h1 class="text-lg font-semibold text-slate-900"><b>Student Dashboard</b></h1>
+        <div class="w-60 bg-indigo-700 text-white flex-shrink-0 rounded-lg shadow-lg">
+            <div class="p-6 text-center">
+                <h1 class="text-xl font-bold">Student Dashboard</h1>
             </div>
             <ul class="flex-1">
-                <li class="p-4 hover:bg-gray-700"><a href="{{ route('student.dashboard') }}">Show Users</a></li>
-                <li class="p-4 hover:bg-gray-700"><a href="{{ route('student.guests.create') }}">Create Guest User</a>
+                <li class="p-4 hover:bg-indigo-800 transition-colors rounded-lg mx-2">
+                    <a href="{{ route('student.dashboard.index') }}">Show Users</a>
                 </li>
-                <li class="p-4 hover:bg-gray-700"><a href="{{ route('profile.edit') }}">Your Profile</a></li>
-                <li class="p-4 hover:bg-gray-700">
+                <li class="p-4 hover:bg-indigo-800 transition-colors rounded-lg mx-2">
+                    <a href="{{ route('student.guests.create') }}">Create Guest User</a>
+                </li>
+                <li class="p-4 hover:bg-indigo-800 transition-colors rounded-lg mx-2">
+                    <a href="{{ route('profile.edit') }}">Your Profile</a>
+                </li>
+                <li class="p-4 hover:bg-indigo-800 transition-colors rounded-lg mx-2">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit">Logout</button>
+                        <button type="submit" class="w-full text-left">Logout</button>
                     </form>
                 </li>
             </ul>
         </div>
 
         <!-- Main Content -->
-        <div class="flex-1">
-            <!-- Content Area -->
-            <div class="py-12 bg-gray-50">
-                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-8">
+        <div class="flex-1 p-4">
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <!-- Total Students -->
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-gray-800">Total Students</h3>
+                    <p class="text-4xl font-extrabold text-indigo-600">{{ $studentCount }}</p>
+                </div>
 
-                        <!-- Total Students -->
-                        <h3 class="text-center text-2xl font-bold text-gray-800 mb-8">Total Students:
-                            <span class="text-blue-600">{{ $studentCount }}</span>
-                        </h3>
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <!-- Student Growth Over Time Chart -->
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md">
+                        <h4 class="text-lg font-bold text-gray-700 text-center mb-4">Student Growth Over Time</h4>
+                        <canvas id="studentGrowthChart"></canvas>
+                    </div>
 
-                        <!-- Charts Section -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-                            <!-- Student Growth Over Time Chart -->
-                            <div class="bg-gray-100 p-6 rounded-lg shadow-lg">
-                                <h4 class="text-center text-lg font-semibold text-gray-700 mb-4">Student Growth Over
-                                    Time</h4>
-                                <canvas id="studentGrowthChart" width="400" height="300"></canvas>
-                            </div>
+                    <!-- Student Registration by Day Chart -->
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md">
+                        <h4 class="text-lg font-bold text-gray-700 text-center mb-4">Registrations by Day</h4>
+                        <canvas id="studentRegistrationChart"></canvas>
+                    </div>
+                </div>
 
-                            <!-- Student Registration by Day Chart -->
-                            <div class="bg-gray-100 p-6 rounded-lg shadow-lg">
-                                <h4 class="text-center text-lg font-semibold text-gray-700 mb-4">Student Registration by
-                                    Day (Last 30 Days)</h4>
-                                <canvas id="studentRegistrationChart" width="400" height="300"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Recently Registered Students -->
-                        <div class="mt-12">
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4">Recently Registered Students</h3>
-                            <ul class="list-disc pl-5 text-gray-700">
-                                @foreach ($recentStudents as $student)
-                                    <li>
-                                        <span class="font-bold text-gray-800">{{ $student->name }}</span>
-                                        (<span class="text-blue-600">{{ $student->email }}</span>)
-                                        - Registered on
-                                        <span
-                                            class="text-gray-600">{{ $student->created_at->format('Y-m-d H:i') }}</span>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
+                <!-- Recently Registered Students -->
+                <div class="mt-12">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">Recently Registered Students</h3>
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md">
+                        <ul class="divide-y divide-gray-200">
+                            @foreach ($recentStudents as $student)
+                                <li class="py-4 flex justify-between items-center">
+                                    <div>
+                                        <p class="font-bold text-gray-800">{{ $student->name }}</p>
+                                        <p class="text-sm text-gray-600">{{ $student->email }}</p>
+                                    </div>
+                                    <p class="text-gray-500 text-sm">{{ $student->created_at->format('Y-m-d H:i') }}</p>
+                                </li>
+                            @endforeach
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -74,23 +74,32 @@
     <script>
         // Student Growth Over Time Chart
         const studentGrowthCtx = document.getElementById('studentGrowthChart').getContext('2d');
-        const studentGrowthChart = new Chart(studentGrowthCtx, {
+        new Chart(studentGrowthCtx, {
             type: 'line',
             data: {
                 labels: @json($studentGrowth->pluck('month')),
                 datasets: [{
                     label: 'Student Growth',
                     data: @json($studentGrowth->pluck('count')),
-                    borderColor: '#36A2EB',
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: '#4F46E5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.2)',
                     fill: true,
+                    tension: 0.4
                 }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
             }
         });
 
         // Student Registration by Day Chart
         const studentRegCtx = document.getElementById('studentRegistrationChart').getContext('2d');
-        const studentRegistrationChart = new Chart(studentRegCtx, {
+        new Chart(studentRegCtx, {
             type: 'bar',
             data: {
                 labels: @json($studentRegistrationByDay->pluck('date')),
@@ -98,8 +107,17 @@
                     label: 'Registrations per Day',
                     data: @json($studentRegistrationByDay->pluck('count')),
                     backgroundColor: '#FF7043',
-                    hoverBackgroundColor: '#FF5722',
+                    borderColor: '#FF5722',
+                    borderWidth: 1
                 }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
             }
         });
     </script>
