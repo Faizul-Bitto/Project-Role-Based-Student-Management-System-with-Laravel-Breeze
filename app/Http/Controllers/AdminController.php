@@ -53,9 +53,7 @@ class AdminController extends Controller {
     public function edit( User $user ) {
 
         if ( $user->hasRole( 'Admin' ) ) {
-            return response()->json( [
-                'error' => 'Admin User Cannot be Edited',
-            ], 400 ); // 400 Bad Request for error
+            return redirect()->back()->withErrors( 'Admin User Cannot be Edited' );
         }
 
         return view( 'pages.admin.edit', compact( 'user' ) );
@@ -103,9 +101,7 @@ class AdminController extends Controller {
     public function destroy( User $user ) {
 
         if ( $user->hasRole( 'Admin' ) ) {
-            return response()->json( [
-                'error' => 'Admin User Cannot be Deleted',
-            ], 400 ); // 400 Bad Request for error
+            return redirect()->back()->withErrors( 'Admin User Cannot be Deleted' );
         }
 
         if ( $user->image ) {
